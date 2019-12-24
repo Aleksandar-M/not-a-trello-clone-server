@@ -18,15 +18,13 @@ const cardShema = new mongoose.Schema({
 		type: Boolean,
 		default: false,
 	},
-	tags: {
-		type: [
-			{
-				type: String,
-				trim: true,
-				maxlength: 8,
-			},
-		],
-	},
+	tags: [
+		{
+			type: String,
+			trim: true,
+			maxlength: 8,
+		},
+	],
 	tab: {
 		type: mongoose.Schema.ObjectId,
 		ref: 'Tab',
@@ -35,12 +33,6 @@ const cardShema = new mongoose.Schema({
 		type: mongoose.Schema.ObjectId,
 		ref: 'User',
 	},
-	assignedTo: [
-		{
-			type: mongoose.Schema.ObjectId,
-			ref: 'User',
-		},
-	],
 });
 
 module.exports = mongoose.model('Card', cardShema);
