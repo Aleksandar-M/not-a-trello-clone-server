@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 
-const userShema = new mongoose.Shema({
+const userShema = new mongoose.Schema({
 	email: {
 		type: String,
 		required: [true, 'User must have a email'],
@@ -19,7 +19,7 @@ const userShema = new mongoose.Shema({
 	},
 	assignedToProjects: [
 		{
-			type: mongoose.Shema.ObjectId,
+			type: mongoose.Schema.ObjectId,
 			ref: 'Project',
 		},
 	],
