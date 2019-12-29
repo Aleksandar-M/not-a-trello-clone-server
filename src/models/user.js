@@ -8,7 +8,7 @@ const userShema = new mongoose.Schema({
 		unique: true,
 		validate: [validator.isEmail, 'User must have valid email'],
 	},
-	pasword: {
+	password: {
 		type: String,
 		required: [true, 'User must define password'],
 		minlength: 6,
