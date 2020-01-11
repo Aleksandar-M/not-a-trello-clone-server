@@ -22,6 +22,7 @@ module.exports = {
 		  'tab'
 	  ],
 	  'no-console': 'off',
-	  'no-underscore-dangle': 'off'
+	  'no-underscore-dangle': 'off',
+	  'prefer-destructuring': 'off'
   },
 };
