@@ -1,4 +1,3 @@
-const jwt = require('jsonwebtoken');
 
 exports.getAll = (Model) => async (req, res) => {
 	try {
@@ -39,25 +38,6 @@ exports.getOne = (Model, populateOptions) => async (req, res) => {
 
 exports.createOne = (Model) => async (req, res, next) => {
 	// TODO: append user and tab id's
-
-	const { authorization } = req.headers;
-	let token;
-	let	decoded;
-
-	if (authorization && authorization.startsWith('Bearer')) {
-		token = authorization.split(' ')[1];
-	}
-
-	try {
-		decoded = jwt.verify(token, process.env.JWT_SECRET);
-	} catch (err) {
-		next(err);
-	}
-
-	if (!token || !decoded) {
-		return next('You are not logged in');
-	}
-
 
 	try {
 		const result = await Model.create(req.body);

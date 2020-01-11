@@ -6,6 +6,9 @@ const router = express.Router();
 router.post('/signup', userController.signup);
 router.post('/login', userController.login);
 
+// Middleware that allows only registered users to access routes
+router.use(userController.protect);
+
 router
 	.route('/')
 	.get(userController.allUsers);

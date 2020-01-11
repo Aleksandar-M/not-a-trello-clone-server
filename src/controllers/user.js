@@ -30,20 +30,24 @@ exports.signup = async (req, res, next) => {
 };
 
 exports.login = async (req, res, next) => {
-	const { username, password } = req.body;
+	const { email, password } = req.body;
+
+	if (!email || !password) {
+		return next('Please provide email and password');
+	}
 
 	try {
-		const user = await User.findOne({ email: username }).select('+password');
+		const user = await User.findOne({ email }).select('+password');
 		const passwordCorrect = user === null
 			? false
 			: await bcrypt.compare(password, user.password);
 
 		if (!user || !passwordCorrect) {
-			return next('Invalid username or password');
+			return next('Invalid email or password');
 		}
 
 		const token = jwt.sign({
-			username,
+			email,
 			id: user._id,
 		}, process.env.JWT_SECRET,
 		{ expiresIn: String(process.env.JWT_EXPIRES) });
@@ -51,13 +55,46 @@ exports.login = async (req, res, next) => {
 		res.status(200).json({
 			status: 'Success',
 			data: {
-				username,
+				email,
 				token,
 			},
 		});
 	} catch (err) {
 		next(err);
 	}
+};
+
+exports.protect = async (req, res, next) => {
+	const { authorization } = req.headers;
+	let token;
+	let	decoded;
+
+	if (authorization && authorization.startsWith('Bearer')) {
+		token = authorization.split(' ')[1];
+	}
+
+	if (!token) {
+		return next('You are not logged in');
+	}
+
+	try {
+		decoded = jwt.verify(token, process.env.JWT_SECRET);
+	} catch (err) {
+		next(err);
+	}
+
+	if (!decoded) {
+		return next('You are not logged in');
+	}
+
+	// Append user to request
+	req.user = {
+		email: decoded.email,
+		id: decoded.id,
+	};
+
+	// Grant access to protected route
+	next();
 };
 
 exports.allUsers = handleCrud.getAll(User);
