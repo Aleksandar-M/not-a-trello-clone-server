@@ -98,6 +98,6 @@ exports.protect = async (req, res, next) => {
 };
 
 exports.allUsers = handleCrud.getAll(User);
-exports.oneUser = handleCrud.getOne(User);
+exports.oneUser = handleCrud.getOne(User, ['project', 'card']);
 exports.updateUser = handleCrud.updateOne(User);
 exports.removeUser = handleCrud.deleteOne(User);

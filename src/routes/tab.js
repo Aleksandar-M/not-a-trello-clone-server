@@ -1,16 +1,19 @@
 const express = require('express');
 const tabController = require('../controllers/tab');
 const userController = require('../controllers/user');
+const cardRouter = require('./card');
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 // Middleware that allows only registered users to access routes
 router.use(userController.protect);
 
+router.use('/:tabId/cards', cardRouter);
+
 router
 	.route('/')
 	.get(tabController.allTabs)
-	.post(tabController.createTab);
+	.post(tabController.setProject, tabController.createTab);
 
 router
 	.route('/:id')

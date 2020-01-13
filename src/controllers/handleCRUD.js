@@ -1,7 +1,7 @@
 
 exports.getAll = (Model) => async (req, res) => {
 	try {
-		const result = await Model.find({}).populate('tab', 'author');
+		const result = await Model.find({});
 
 		res.status(200).json({
 			message: 'Success',
