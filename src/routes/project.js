@@ -10,10 +10,12 @@ router.use(userController.protect);
 
 router.use('/:projectId/tabs', tabRouter);
 
+router.patch('/:projectId/userToProject', userController.addUserToProject);
+
 router
 	.route('/')
 	.get(projectController.allProjects)
-	.post(projectController.createProject);
+	.post(projectController.createProject, userController.addUserToProject);
 
 router
 	.route('/:id')

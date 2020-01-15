@@ -42,6 +42,17 @@ exports.createOne = (Model) => async (req, res, next) => {
 	try {
 		const result = await Model.create(req.body);
 
+		// On creation of new project append project to request and go to
+		// next middleware(addUserToProject)
+		if (Model.collection.collectionName === 'projects') {
+			req.project = {
+				id: result._id,
+				name: result.name,
+			};
+			return next();
+		}
+
+		// else ignore it and send response
 		res.status(201).json({
 			message: 'Success',
 			data: {

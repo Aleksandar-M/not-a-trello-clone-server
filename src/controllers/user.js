@@ -97,6 +97,45 @@ exports.protect = async (req, res, next) => {
 	next();
 };
 
+exports.addUserToProject = async (req, res, next) => {
+	let userID;
+	let projectID;
+
+	if (req.project) {
+		// Newly created project, add current user who created project
+		projectID = req.project.id;
+		userID = req.user.id;
+	} else {
+		// Add others
+		projectID = req.params.projectId;
+		userID = req.body.userId;
+	}
+
+	try {
+		const result = await User.findByIdAndUpdate(userID, {
+			$push: {
+				assignedToProjects: projectID,
+			},
+		}, {
+			new: true,
+			runValidators: true,
+		});
+
+		if (!result) {
+			next('Project not found in DB');
+		}
+
+		res.status(201).json({
+			message: 'Success',
+			data: {
+				result,
+			},
+		});
+	} catch (err) {
+		next(err);
+	}
+};
+
 exports.allUsers = handleCrud.getAll(User);
 exports.oneUser = handleCrud.getOne(User, ['project', 'card']);
 exports.updateUser = handleCrud.updateOne(User);
