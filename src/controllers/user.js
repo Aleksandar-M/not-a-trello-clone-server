@@ -137,6 +137,6 @@ exports.addUserToProject = async (req, res, next) => {
 };
 
 exports.allUsers = handleCrud.getAll(User);
-exports.oneUser = handleCrud.getOne(User, ['project', 'card']);
+exports.oneUser = handleCrud.getOne(User, ['assignedToProjects', 'assignedToCards']);
 exports.updateUser = handleCrud.updateOne(User);
 exports.removeUser = handleCrud.deleteOne(User);

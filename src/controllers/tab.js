@@ -2,7 +2,6 @@ const handleCrud = require('./handleCRUD');
 const Tab = require('./../models/tab');
 
 exports.setProject = (req, res, next) => {
-	console.log(req.params);
 	if (!req.body.project) req.body.project = req.params.projectId;
 	next();
 };
