@@ -1,8 +1,9 @@
+const mongoose = require('mongoose');
+const AppError = require('../utils/AppError');
 
-exports.getAll = (Model) => async (req, res) => {
+exports.getAll = (Model) => async (req, res, next) => {
 	try {
 		const result = await Model.find({});
-
 		res.status(200).json({
 			message: 'Success',
 			data: {
@@ -10,19 +11,22 @@ exports.getAll = (Model) => async (req, res) => {
 			},
 		});
 	} catch (err) {
-		console.log(err);
+		return next(err);
 	}
 };
 
-exports.getOne = (Model, populateOptions) => async (req, res) => {
+exports.getOne = (Model, populateOptions) => async (req, res, next) => {
 	try {
-		let query = Model.findById(req.params.id);
+		const convertedId = mongoose.Types.ObjectId(req.params.id);
+		let query = Model.findById(convertedId);
+		// let query = Model.findById(req.params.id);
+
 		if (populateOptions) query = query.populate(populateOptions);
 
 		const result = await query;
 
 		if (!result) {
-			console.log('Card not found in DB');
+			return next(new AppError('Nothing found with that ID', 404));
 		}
 
 		res.status(200).json({
@@ -32,7 +36,7 @@ exports.getOne = (Model, populateOptions) => async (req, res) => {
 			},
 		});
 	} catch (err) {
-		console.log(err);
+		return next(err);
 	}
 };
 
@@ -60,11 +64,11 @@ exports.createOne = (Model) => async (req, res, next) => {
 			},
 		});
 	} catch (err) {
-		console.log(err);
+		return next(err);
 	}
 };
 
-exports.updateOne = (Model) => async (req, res) => {
+exports.updateOne = (Model) => async (req, res, next) => {
 	try {
 		const result = await Model.findByIdAndUpdate(req.params.id, req.body, {
 			new: true,
@@ -72,7 +76,7 @@ exports.updateOne = (Model) => async (req, res) => {
 		});
 
 		if (!result) {
-			console.log('Card not found in DB');
+			return next(new AppError('Nothing found with that ID', 404));
 		}
 
 		res.status(201).json({
@@ -82,16 +86,16 @@ exports.updateOne = (Model) => async (req, res) => {
 			},
 		});
 	} catch (err) {
-		console.log(err);
+		return next(err);
 	}
 };
 
-exports.deleteOne = (Model) => async (req, res) => {
+exports.deleteOne = (Model) => async (req, res, next) => {
 	try {
 		const result = await Model.findByIdAndDelete(req.params.id);
 
 		if (!result) {
-			console.log('Card not found in DB');
+			return next(new AppError('Nothing found with that ID', 404));
 		}
 
 		res.status(204).json({
@@ -101,6 +105,6 @@ exports.deleteOne = (Model) => async (req, res) => {
 			},
 		});
 	} catch (err) {
-		console.log(err);
+		return next(err);
 	}
 };

@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const handleCrud = require('./handleCRUD');
 const User = require('./../models/user');
+const AppError = require('../utils/AppError');
 
 exports.signup = async (req, res, next) => {
 	const { email, password } = req.body;
@@ -25,7 +26,7 @@ exports.signup = async (req, res, next) => {
 			},
 		});
 	} catch (err) {
-		next(err);
+		return next(err);
 	}
 };
 
@@ -33,7 +34,7 @@ exports.login = async (req, res, next) => {
 	const { email, password } = req.body;
 
 	if (!email || !password) {
-		return next('Please provide email and password');
+		return next(new AppError('Please provide email and password.', 400));
 	}
 
 	try {
@@ -43,7 +44,7 @@ exports.login = async (req, res, next) => {
 			: await bcrypt.compare(password, user.password);
 
 		if (!user || !passwordCorrect) {
-			return next('Invalid email or password');
+			return next(new AppError('Incorrect email or password.', 401));
 		}
 
 		const token = jwt.sign({
@@ -60,7 +61,7 @@ exports.login = async (req, res, next) => {
 			},
 		});
 	} catch (err) {
-		next(err);
+		return next(err);
 	}
 };
 
@@ -74,17 +75,17 @@ exports.protect = async (req, res, next) => {
 	}
 
 	if (!token) {
-		return next('You are not logged in');
+		return next(new AppError('You are not logged in.', 401));
 	}
 
 	try {
 		decoded = jwt.verify(token, process.env.JWT_SECRET);
 	} catch (err) {
-		next(err);
+		return next(err);
 	}
 
 	if (!decoded) {
-		return next('You are not logged in');
+		return next(new AppError('You are not logged in.', 401));
 	}
 
 	// Append user to request
@@ -122,7 +123,7 @@ exports.addUserToProject = async (req, res, next) => {
 		});
 
 		if (!result) {
-			next('Project not found in DB');
+			return next(new AppError('Nothing found with that ID', 404));
 		}
 
 		res.status(201).json({
@@ -132,7 +133,7 @@ exports.addUserToProject = async (req, res, next) => {
 			},
 		});
 	} catch (err) {
-		next(err);
+		return next(err);
 	}
 };
 

@@ -16,7 +16,7 @@ exports.setCompleted = (req, res, next) => {
 };
 
 // Parameter: true or false
-exports.getAllCompleted = (parameter) => async (req, res) => {
+exports.getAllCompleted = (parameter) => async (req, res, next) => {
 	try {
 		const resultTabs = await Tab.find({ project: req.params.projectId });
 
@@ -35,7 +35,7 @@ exports.getAllCompleted = (parameter) => async (req, res) => {
 			},
 		});
 	} catch (err) {
-		console.log(err);
+		return next(err);
 	}
 };
 
