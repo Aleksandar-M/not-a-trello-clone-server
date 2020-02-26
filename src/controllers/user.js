@@ -8,7 +8,7 @@ exports.signup = async (req, res, next) => {
 	const { email, password } = req.body;
 
 	if (!email || !password || password.length < 6) {
-		return next('Missing username or password or not vaild');
+		return next(new AppError('Missing username or password or password length is less than 6'));
 	}
 
 	try {
